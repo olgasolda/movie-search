@@ -1,3 +1,14 @@
+const getData = (url) => fetch(url)
+  .then(res => res.json())
+  .then(data => data.Search);
+
+const searchString = 'Superman';
+
+getData(`http://omdbapi.com/?apikey=d8d86f03&s=${searchString}`)
+  .then((movies) => movies.forEach(movie => console.log(movie)))
+  .catch((err) => console.log(err));
+
+
 // xhr variant
 
 // const getData = (url) => new Promise((resolve, reject) => {
@@ -18,12 +29,15 @@
 //   xhr.onerror = (err) => reject(err);
 // });
 
-const getData = (url) => fetch(url)
-  .then(res => res.json())
-  .then(data => data.Search);
+  // const superman = getData(`http://omdbapi.com/?apikey=d8d86f03&s=Superman`);
+  // const batman = getData(`http://omdbapi.com/?apikey=d8d86f03&s=Batman`);
+  // const ironman = getData(`http://omdbapi.com/?apikey=d8d86f03&s=Iron man`);
 
-const searchString = 'Superman';
+  // 1 variant promiseAll
 
-getData(`http://omdbapi.com/?apikey=d8d86f03&s=${searchString}`)
-  .then((movies) => movies.forEach(movie => console.log(movie)))
-  .catch((err) => console.log(err));
+  // Promise.all([superman, batman, ironman])
+  // .then((arr) => arr.forEach(movies => movies.forEach((movie) => console.log(movie))));
+
+  // 2 variant promiseRace
+
+  // Promise.race([superman, batman, ironman]).then(console.log);
