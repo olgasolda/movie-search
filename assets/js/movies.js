@@ -1,60 +1,21 @@
 import {
-  addMovieToList,
-  clearMarkup,
-  createMarkup,
   createStyle,
-  inputSearch,
-  moviesList,
-  triggerMode,
-} from "./dom.js";
+  createMarkup,
+  addMoviesToList,
+  moviesList
+} from './dom.js';
 
-let siteUrl = null;
-let searchLast = null;
+const getData = (url) => fetch(url)
+  .then(res => res.json())
+  .then(data => data.Search);
 
-const getData = (url) =>
-  fetch(url)
-    .then((res) => res.json())
-    .then((json) => {
-      if (!json || !json.Search) throw Error("Wrong object from server");
+const searchString = 'Superman';
 
-      return json.Search;
-    });
+getData(`http://omdbapi.com/?apikey=d8d86f03&s=${searchString}`)
+  .then((movies) => movies.forEach(movie => addMoviesToList(movie)))
+  .catch((err) => console.log(err));
 
-const debounce = (() => {
-  let timer = null;
-
-  return (cb, ms) => {
-    if (timer) {
-      clearTimeout(timer);
-      timer = null;
-    }
-    timer = setTimeout(cb, ms);
-  };
-})();
-
-const inputSearchHandler = (e) => {
-  debounce(() => {
-    const searchString = e.target.value.trim();
-
-    if (
-      searchString &&
-      searchString.length > 3 &&
-      searchString !== searchLast
-    ) {
-      if (!triggerMode) clearMarkup(moviesList);
-
-      getData(`${siteUrl}?s=${searchString}&apikey=18b8609f`)
-        .then((movies) => movies.forEach((movie) => addMovieToList(movie)))
-        .catch((err) => console.error(err));
-    }
-    searchLast = searchString;
-  }, 2000);
-};
-
-export const appInit = () => {
-  createStyle();
+export const init = () => {
   createMarkup();
-
-  siteUrl = "https://www.omdbapi.com/";
-  inputSearch.addEventListener("keyup", inputSearchHandler);
-};
+  createStyle();
+}

@@ -1,218 +1,65 @@
-export let inputSearch = null;
 export let moviesList = null;
-export let triggerMode = false;
+export const createStyle = () => {
+  const headStyle = document.createElement('style');
 
-export const createElement = ({
-  type,
-  attrs,
-  container = null,
-  position = "append",
-  evt = null,
-  handler = null,
-}) => {
-  const el = document.createElement(type);
+  headStyle.innerHTML = `
+  * {
+  box-sizing: border-box;
+}
 
-  Object.keys(attrs).forEach((key) => {
-    if (key !== "innerHTML") el.setAttribute(key, attrs[key]);
-    else el.innerHTML = attrs[key];
-  });
+body {
+  margin: 0;
+}
 
-  if (container && position === "append") container.append(el);
-  if (container && position === "prepend") container.prepend(el);
+.container {
+  padding: 20px;
+}
 
-  if (evt && handler && typeof handler === "function") {
-    el.addEventListener(evt, handler);
-  }
+.movies {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
 
-  return el;
-};
+.movie {
+  align-content: center;
+  justify-content: center;
+}
+
+.movie__image {
+  width: 100%;
+  object-fit: cover;
+}
+  `;
+
+  document.head.append(headStyle);
+}
 
 export const createMarkup = () => {
-  const container = createElement({
-    type: "div",
-    attrs: { class: "container" },
-    container: document.body,
-    position: "prepend",
-  });
+  const container = document.createElement('div');
+  const movies = document.createElement('div');
 
-  createElement({
-    type: "h1",
-    attrs: {
-      innerHTML: "Movies LookUp",
-    },
-    container,
-  });
 
-  const searchBox = createElement({
-    type: "div",
-    attrs: { class: "search" },
-    container,
-  });
+  container.setAttribute('class', 'container');
+  movies.setAttribute('class', 'movies');
 
-  const inputBox = createElement({
-    type: "div",
-    attrs: { class: "search__group search__group--input" },
-    container: searchBox,
-  });
 
-  const checkbox = createElement({
-    type: "div",
-    attrs: { class: "search__group search__group--checkbox" },
-    container: searchBox,
-  });
+  container.append(movies);
+  document.body.append(container);
 
-  createElement({
-    type: "label",
-    attrs: {
-      class: "search__label-input",
-      for: "search",
-      innerText: "Movie search",
-    },
-    container: inputBox,
-  });
+  moviesList = document.querySelector('.movies');
+}
 
-  inputSearch = createElement({
-    type: "input",
-    attrs: {
-      class: "search__input",
-      type: "search",
-      id: "search",
-      placeholder: "Searching for...",
-    },
-    container: inputBox,
-  });
+export const addMoviesToList = (movie) => {
+const item = document.createElement('div');
+const img = document.createElement('img');
 
-  createElement({
-    type: "input",
-    attrs: {
-      class: "search__checkbox",
-      id: "checkbox",
-      type: "checkbox",
-    },
-    container: checkbox,
-    evt: "click",
-    handler: () => (triggerMode = !triggerMode),
-  });
 
-  createElement({
-    type: "label",
-    attrs: {
-      class: "search__label-checkbox",
-      for: "checkbox",
-      innerHTML: "Add movie to existing list",
-    },
-    container: checkbox,
-  });
+item.setAttribute('class', 'movie');
+img.setAttribute('class', 'movie__image');
+img.src = movie.Poster;
+img.alt = `${movie.Title} ${movie.Year}`;
 
-  moviesList = createElement({
-    type: "div",
-    attrs: { class: "movies" },
-    container,
-  });
-
-  createElement({
-    type: "div",
-    attrs: {
-      class: "footer",
-      innerHTML: "&copy; Butnari Dumitru ",
-    },
-    container,
-  });
-};
-
-export const createStyle = () => {
-  createElement({
-    type: "style",
-    attrs: {
-      innerHTML: `
-        * 
-        box-sizing: border-box;
-        }
-        
-        body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        }
-        
-        .container {
-        border: 2px solid #0f0f0f;
-        padding: 20px;
-        max-width: 1280px;
-        min-height: 90vh;
-        margin: 0 auto;
-        }
-        
-        .movies {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 20px;
-        }
-        
-        .movie {
-        display: flex;
-        align-content: center;
-        justify-content: center;
-        }
-        
-        .movie__image {
-        width: 100%;
-        object-fit: cover;
-        } 
-        
-        .search {
-        margin-bottom: 30px;
-        }
-        
-        .search__label-input  {
-        display: block;
-        margin-bottom: 10px;
-        }
-        
-        .search__input {
-        display: block;
-        max-width: 350px;
-        width: 100%;
-        padding: 10px 15px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        border: 2px solid lightcoral;
-        }
-        
-        .search__label-checkbox {
-        font-size: 14px;
-        display: inline-block;
-        transform: translate(5px, -1px);
-        }
-        
-        .footer {
-          padding: 10px;
-          font-size: 1.2rem;
-          text-align: center;
-          color: #e91212;
-          opacity: 0;
-      }`,
-    },
-    container: document.head,
-  });
-};
-
-export const clearMarkup = (el) => el && (el.innerHTML = "");
-
-export const addMovieToList = (m) => {
-  const item = createElement({
-    type: "div",
-    attrs: { class: "movie" },
-    container: moviesList,
-  });
-
-  createElement({
-    type: "img",
-    attrs: {
-      class: "movie__image",
-      src: /^(http|https):\/\//i.test(m.Poster) ? m.Poster : "img/no-image.png",
-      alt: m.Title,
-      title: m.Title,
-    },
-    container: item,
-  });
+item.append(img);
+moviesList.append(item);
 };
