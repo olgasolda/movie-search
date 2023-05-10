@@ -8,6 +8,7 @@ import {
   triggerMode
 } from './dom.js';
 
+let siteUrl = null;
 let searchLast = null;
 
 const debounceTime = (() => {
@@ -31,7 +32,8 @@ const inputSearchHandler = (e) => {
     if (searchString && searchString.length > 3 && searchString !== searchLast) {
       if (!triggerMode) clearMoviesMarkup(moviesList);
 
-      getData(`https://omdbapi.com/?apikey=d8d86f03&s=${searchString}`)
+      getData(`${siteUrl}?s=${searchString}&apikey=d8d86f03`)
+      // getData(`http://omdbapi.com/?apikey=d8d86f03&s=${searchString}`)
         .then((movies) => movies.forEach(movie => addMoviesToList(movie)))
         .catch((err) => console.log(err));
     }
@@ -43,5 +45,6 @@ export const init = () => {
   createMarkup();
   createStyle();
 
+  siteUrl = 'https://www.omdbapi.com/';
   inputSearch.addEventListener('input', inputSearchHandler);
 }
